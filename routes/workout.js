@@ -3,7 +3,7 @@ router = express.Router();
 const { Op } = require("sequelize");
 
 const db = require("../models");
-const { Workout, Workout_Exercise, Exercise } = db;
+const { Workout, Exercise } = db;
 
 router.get("/listAll", async (req, res, next) => {
   try {
@@ -47,10 +47,11 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/add_exercise/:workoutId", async (req, res, next) => {
+router.post("/add_exercise", async (req, res, next) => {
   try {
     const userId = req.query.userId;
-    const workout = await Workout.findByPk(req.params.workoutId);
+    const workoutId = req.query.workoutId;
+    const workout = await Workout.findByPk(workoutId);
     if (workout) {
       const exercise = await Exercise.findOrCreate({
         where: {
