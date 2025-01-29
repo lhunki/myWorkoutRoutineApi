@@ -23,36 +23,14 @@ router.get("/date", async (req, res, next) => {
     const userId = req.query.userId;
     const workouts = await Workout.findAll({
       where: {
-        userId,
-        date: { [Op.between]: [startDate, endDate] },
+        [Op.and]: [
+          { userId },
+          { date: { [Op.between]: [startDate, endDate] } },
+        ],
       },
+      include: Exercise,
     });
-
-    const ret = await Promise.all(
-      workouts.map(async (workout) => {
-        const workout_exercises = await Workout_Exercise.findAll({
-          where: { workoutId: workout.id },
-        });
-
-        const exercises = await Promise.all(
-          workout_exercises.map(async (workout_exercise) => {
-            const exercise = await Exercise.findOne({
-              where: { id: workout_exercise.exerciseId, userId },
-            });
-            const data = {};
-            data.name = exercise.name;
-            data.weight = workout_exercise.weight;
-            data.sets = workout_exercise.sets;
-            data.reps = workout_exercise.reps;
-            return data;
-          })
-        );
-
-        return { id: workout.id, date: workout.date, exercises };
-      })
-    );
-
-    res.json(ret);
+    res.json(workouts);
   } catch (error) {
     next(error);
   }
@@ -74,16 +52,17 @@ router.post("/add_exercise/:workoutId", async (req, res, next) => {
     const userId = req.query.userId;
     const workout = await Workout.findByPk(req.params.workoutId);
     if (workout) {
-      var exercise = await Exercise.findOne({ where: { userId, name: req.body.name } });
-      console.log(exercise);
-      if (!exercise) {
-        exercise = await Exercise.create({
+      const exercise = await Exercise.findOrCreate({
+        where: {
+          [Op.and]: [{ userId }, { name: req.body.name }],
+        },
+        defaults: {
           name: req.body.name,
           userId: userId,
           description: req.body.description,
           muscleGroup: req.body.muscleGroup,
-        });
-      }
+        },
+      });
       await workout.addExercise(exercise, {
         through: {
           sets: req.body.sets,
