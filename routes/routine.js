@@ -1,41 +1,83 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
+const { Op } = require("sequelize");
 
-const db = require('../models');
+const db = require("../models");
 const { Routine, Exercise } = db;
 
-router.get('/:workoutId', async (req, res, next) => {
+router.get("/listAll", async (req, res, next) => {
   try {
-    const routine = await Routine.findAll( {where: { workoutId: req.params.workoutId }});
+    const routines = await Routine.findAll({
+      where: { userId: req.query.userId },
+      include: Exercise,
+    });
+    res.json(routines);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/id/:routineId", async (req, res, next) => {
+  try {
+    const routine = await Routine.findOne({
+      where: { id: req.params.routineId },
+      include: Exercise,
+    });
     res.json(routine);
   } catch (error) {
     next(error);
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
-    const newRoutine = Routine.build(req.body);
-    await newRoutine.save();
-    res.json(newRoutine);
+    userId = req.query.userId;
+    // const newRoutine = Routine.build(req.body);
+    const routine = await Routine.findOrCreate({
+      where: {
+        [Op.and]: [{ userId }, { name: req.body.name }],
+      },
+      defaults: {
+        userId,
+        name: req.body.name,
+        description: req.body.description,
+      },
+    });
+    if (!routine[1]) {
+      routine[0].update({ description: req.body.description });
+    }
+    res.json(routine[0]);
   } catch (error) {
     next(error);
   }
 });
 
-router.post('/add_exercise/:routineId', async (req, res, next) => {
+router.post("/add_exercise", async (req, res, next) => {
   try {
-    const routine = await Routine.findByPk(req.params.routineId);
+    const userId = req.query.userId;
+    const routineId = req.query.routineId;
+    const routine = await Routine.findByPk(routineId);
     if (routine) {
-      const newExercise = await Exercise.create({
-        name: req.body.name,
-        description: req.body.description,
-        muscleGroup: req.body.muscleGroup
+      const exercise = await Exercise.findOrCreate({
+        where: {
+          [Op.and]: [{ userId }, { name: req.body.name }],
+        },
+        defaults: {
+          name:req.body.name,
+          userId: userId,
+          description: req.body.description,
+        }
       });
-      await routine.addExercise(newExercise, { through: { set: req.body.set, reps: req.body.reps, weight: req.body.weight } });
+      await routine.addExercise(exercise[0], {
+        through: {
+          set: req.body.set,
+          reps: req.body.reps,
+          weight: req.body.weight,
+        },
+      });
       res.json(routine);
     } else {
-      res.status(404).send('Routine not found');
+      res.status(404).send("Routine not found");
     }
   } catch (error) {
     next(error);

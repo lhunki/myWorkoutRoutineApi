@@ -31,28 +31,13 @@ router.post("/", async (req, res, next) => {
         target_muscle: req.body.target_muscle,
       },
     });
-    res.json(exercise);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put("/", async (req, res, next) => {
-  try {
-    const userId = req.query.userId;
-    const newInfo = req.body;
-    const exercise = await Exercise.findOne({
-      where: {
-        [Op.and]: [{ userId }, { name: newInfo.name }],
-      },
-    });
-    if (exercise) {
-      Object.keys(newInfo).forEach((prop) => {
-        exercise[prop] = newInfo[prop];
+    if (!exercise[1]) {
+      exercise[0].update({
+        description: req.body.description,
+        target_muscle: req.body.target_muscle,
       });
-      await exercise.save();
     }
-    res.json(exercise);
+    res.json(exercise[0]);
   } catch (error) {
     next(error);
   }

@@ -64,7 +64,7 @@ router.post("/add_exercise", async (req, res, next) => {
           muscleGroup: req.body.muscleGroup,
         },
       });
-      await workout.addExercise(exercise, {
+      await workout.addExercise(exercise[0], {
         through: {
           sets: req.body.sets,
           reps: req.body.reps,
