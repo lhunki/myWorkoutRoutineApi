@@ -11,8 +11,7 @@ var router = express.Router();
 const db = require("../models");
 const { User } = db;
 
-const SECRET_KEY_PATH = path.join(__dirname, "../config/jwt_secret.key");
-const SECRET_KEY = fs.readFileSync(SECRET_KEY_PATH, "utf-8").trim();
+const SECRET_KEY = process.env.JWT_SECRET;
 
 // GitHub OAuth
 const githubConfig = require('../config/github_auth.json');

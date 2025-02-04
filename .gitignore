@@ -4,4 +4,9 @@ node_modules/
 # Sequelize
 migrations/
 seeders/
-config/
+
+# Config
+config/config.json
+config/jwt_secret.key
+config/github_auth.json
+.env
