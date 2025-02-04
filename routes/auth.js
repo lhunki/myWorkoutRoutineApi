@@ -13,9 +13,6 @@ const { User } = db;
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
-// GitHub OAuth
-const githubConfig = require('../config/github_auth.json');
-
 router.post("/auth/register", async (req, res, next) => {
   try {
     const { loginId, password, userName, email } = req.body;
@@ -67,10 +64,10 @@ router.post("/auth/login_github", async (req, res, next) => {
   }
   try {
     // Get access token from github API
-    const tokenResponse = await axios.post(githubConfig.GITHUB_TOKEN_URL, null, {
+    const tokenResponse = await axios.post(process.env.GITHUB_TOKEN_URL, null, {
       params: {
-        client_id: githubConfig.CLIENT_ID,
-        client_secret: githubConfig.CLIENT_SECRET,
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
         code: authCode,
       },
       headers: {
@@ -80,7 +77,7 @@ router.post("/auth/login_github", async (req, res, next) => {
     const accessToken = tokenResponse.data.access_token;
 
     // Get user data from github API
-    const userResponse = await axios.get(githubConfig.GITHUB_USER_URL, {
+    const userResponse = await axios.get(process.env.GITHUB_USER_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
