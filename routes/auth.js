@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const bcrypt = require("bcrypt");
 
 var express = require("express");
 const axios = require("axios");
@@ -32,29 +33,31 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-router.post("/login", async (req, res, next) => {
+router.post("/auth/login", async (req, res, next) => {
   try {
     const { loginId, password } = req.body;
-    const user = await User.findOne({
-      where: {
-        [Op.and]: [{ loginId }, { password }],
-      },
-    });
+    const user = await User.findOne({where: {loginId}});
     if (!user) {
-      res.status(401).json({ message: "Invalid id or password" });
+      return res.status(400).json({message: "User not exists."});
+    }
+
+    // Check password
+    console.log(password, user.password, user.id, user.userName);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({message: "Wrong password."});
     }
 
     const token = jwt.sign({ userId: user.id }, SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "6h",
     });
-
     res.json({ token });
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/login_github", async (req, res, next) => {
+router.post("/auth/login_github", async (req, res, next) => {
   const { authCode } = req.body;
   if (!authCode) {
     return res.status(400).send("Authorization code is required");
@@ -101,40 +104,27 @@ router.post("/login_github", async (req, res, next) => {
   }
 });
 
-router.post("/sign_up", async (req, res, next) => {
+router.post("/auth/register", async (req, res, next) => {
   try {
-    const { id, userName, password, email } = req.body;
+    const { loginId, password, userName, email } = req.body;
+
+    const existingUser = await User.findOne({where: {loginId}});
+    if (existingUser) {
+      return res.status(400).json({message: "Id is already in use."})
+    }
+
     const newUser = await User.create({
-      loginId: id,
-      userName,
+      loginId,
       password,
+      userName,
       email,
     });
-    res.json(newUser);
+    res.json({success: true, user: newUser});
   } catch (error) {
     next(error);
   }
 });
 
 router.use("/", authenticateToken);
-
-router.get("/", async (req, res, next) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/", async (req, res, next) => {
-  try {
-    const newUser = await User.build(req.body);
-    await newUser.save();
-    res.json(newUser);
-  } catch (error) {
-    next(error);
-  }
-});
 
 module.exports = router;
