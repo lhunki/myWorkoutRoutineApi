@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const helmet = require('helmet');
 
-const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const workoutRouter = require('./routes/workout');
 const routineRouter = require('./routes/routine');
@@ -24,8 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/user', userRouter);
+app.use('/', userRouter);
 app.use('/workout', workoutRouter);
 app.use('/routine', routineRouter);
 app.use('/exercise', exerciseRouter);

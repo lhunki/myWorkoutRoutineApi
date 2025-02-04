@@ -8,7 +8,7 @@ const { Workout, Exercise } = db;
 router.get("/listAll", async (req, res, next) => {
   try {
     const workouts = await Workout.findAll({
-      where: { userId: req.query.userId },
+      where: { userId: req.userId },
     });
     res.json(workouts);
   } catch (error) {
@@ -20,7 +20,7 @@ router.get("/date", async (req, res, next) => {
   try {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
-    const userId = req.query.userId;
+    const userId = req.userId;
     const workouts = await Workout.findAll({
       where: {
         [Op.and]: [
@@ -38,7 +38,7 @@ router.get("/date", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    req.body.userId = req.query.userId;
+    req.body.userId = req.userId;
     const newWorkout = Workout.build(req.body);
     await newWorkout.save();
     res.json(newWorkout);
@@ -49,7 +49,7 @@ router.post("/", async (req, res, next) => {
 
 router.post("/add_exercise", async (req, res, next) => {
   try {
-    const userId = req.query.userId;
+    const userId = req.userId;
     const workoutId = req.query.workoutId;
     const workout = await Workout.findByPk(workoutId);
     if (workout) {

@@ -8,7 +8,7 @@ const { Routine, Exercise } = db;
 router.get("/listAll", async (req, res, next) => {
   try {
     const routines = await Routine.findAll({
-      where: { userId: req.query.userId },
+      where: { userId: req.userId },
       include: Exercise,
     });
     res.json(routines);
@@ -31,8 +31,7 @@ router.get("/id/:routineId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    userId = req.query.userId;
-    // const newRoutine = Routine.build(req.body);
+    userId = req.userId;
     const routine = await Routine.findOrCreate({
       where: {
         [Op.and]: [{ userId }, { name: req.body.name }],
@@ -54,7 +53,7 @@ router.post("/", async (req, res, next) => {
 
 router.post("/add_exercise", async (req, res, next) => {
   try {
-    const userId = req.query.userId;
+    const userId = req.userId;
     const routineId = req.query.routineId;
     const routine = await Routine.findByPk(routineId);
     if (routine) {

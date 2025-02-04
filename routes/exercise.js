@@ -8,7 +8,7 @@ const { Exercise } = db;
 router.get("/", async (req, res, next) => {
   try {
     const exercise = await Exercise.findAll({
-      where: { userId: req.query.userId },
+      where: { userId: req.userId },
     });
     res.json(exercise);
   } catch (error) {
@@ -18,7 +18,7 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const userId = req.query.userId;
+    const userId = req.userId;
     const name = req.body.name;
     const exercise = await Exercise.findOrCreate({
       where: {
