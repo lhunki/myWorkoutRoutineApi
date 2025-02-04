@@ -3,14 +3,39 @@ const router = express.Router();
 const { Op } = require("sequelize");
 
 const db = require("../models");
-const { Exercise } = db;
+const { Exercise, Workout } = db;
 
-router.get("/", async (req, res, next) => {
+router.get("/personal_record", async (req, res, next) => {
   try {
-    const exercise = await Exercise.findAll({
+    if (!req.query.id) {
+      res.json({message: "exercise id is neccessary"})
+    }
+    let maxRep = 1;
+    if (req.query.rep) {
+      maxRep = req.query.rep;
+    }
+    const exercise = await Exercise.findOne({
+      where: { userId: req.userId, id:req.query.id},
+      include: Workout
+    });
+    let maxWeight = 0;
+    exercise.Workouts.forEach(workout => {
+      if (workout.Workout_Exercise.reps >= maxRep) {
+        maxWeight = Math.max(maxWeight, workout.Workout_Exercise.weight);
+      }
+    })
+    res.json({maxWeight});
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/listAll", async (req, res, next) => {
+  try {
+    const exercises = await Exercise.findAll({
       where: { userId: req.userId },
     });
-    res.json(exercise);
+    res.json(exercises);
   } catch (error) {
     next(error);
   }

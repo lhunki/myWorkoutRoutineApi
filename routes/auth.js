@@ -17,21 +17,26 @@ const SECRET_KEY = fs.readFileSync(SECRET_KEY_PATH, "utf-8").trim();
 // GitHub OAuth
 const githubConfig = require('../config/github_auth.json');
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ message: "Access denied" });
-
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Token not provided" });
-
+router.post("/auth/register", async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    req.userId = decoded.userId;
-    next();
-  } catch (err) {
-    res.status(403).json({ message: "Token invalid or expired" });
+    const { loginId, password, userName, email } = req.body;
+
+    const existingUser = await User.findOne({where: {loginId}});
+    if (existingUser) {
+      return res.status(400).json({message: "Id is already in use."})
+    }
+
+    const newUser = await User.create({
+      loginId,
+      password,
+      userName,
+      email,
+    });
+    res.json({success: true, user: newUser});
+  } catch (error) {
+    next(error);
   }
-};
+});
 
 router.post("/auth/login", async (req, res, next) => {
   try {
@@ -42,7 +47,6 @@ router.post("/auth/login", async (req, res, next) => {
     }
 
     // Check password
-    console.log(password, user.password, user.id, user.userName);
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({message: "Wrong password."});
@@ -84,11 +88,11 @@ router.post("/auth/login_github", async (req, res, next) => {
     });
 
     // Find or create user data
-    console.log(userResponse.data);
     const user = await User.findOrCreate({
       where: {loginId: `github.${userResponse.data.login}`},
       defaults: {
         loginId: `github.${userResponse.data.login}`,
+        password: 'github',
         userName: userResponse.data.name,
         email: userResponse.data.email,
       }
@@ -96,7 +100,7 @@ router.post("/auth/login_github", async (req, res, next) => {
 
     // Send jwt token as response
     const token = jwt.sign({ userId: user[0].id }, SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "6h",
     });
     res.json({ token });
   } catch (error) {
@@ -104,26 +108,21 @@ router.post("/auth/login_github", async (req, res, next) => {
   }
 });
 
-router.post("/auth/register", async (req, res, next) => {
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "Access denied" });
+
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Token not provided" });
+
   try {
-    const { loginId, password, userName, email } = req.body;
-
-    const existingUser = await User.findOne({where: {loginId}});
-    if (existingUser) {
-      return res.status(400).json({message: "Id is already in use."})
-    }
-
-    const newUser = await User.create({
-      loginId,
-      password,
-      userName,
-      email,
-    });
-    res.json({success: true, user: newUser});
-  } catch (error) {
-    next(error);
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.userId = decoded.userId;
+    next();
+  } catch (err) {
+    res.status(403).json({ message: "Token invalid or expired" });
   }
-});
+};
 
 router.use("/", authenticateToken);
 
