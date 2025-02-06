@@ -35,7 +35,7 @@
 <details>
 <summary><strong>1. 인증</strong></summary>
 
-#### <span style='background-color: #dcffe4'>POST</span> /auth/register
+#### $$\color{green}POST$$ /auth/register
 
 - 설명: 사용자 등록
 - 요청:
@@ -49,7 +49,7 @@
   }
   ```
 
-#### <span style='background-color: #dcffe4'>POST</span> /auth/login
+#### $$\color{green}POST$$ /auth/login
 
 - 설명: 사용자 로그인
 - 요청:
@@ -80,7 +80,7 @@
 <details>
 <summary><strong>2. 운동 기록 (Workout)</strong></summary>
 
-#### <span style='background-color: #fff5b1'>GET</span> /workout/date
+#### $$\color{lightblue}GET$$ /workout/date
 
 - 설명: 특정 날짜의 운동 기록 조회
 - 요청:
@@ -113,17 +113,17 @@
   ]
   ```
 
-#### <span style='background-color: #fff5b1'>GET</span> /workout/list_all
+#### $$\color{lightblue}GET$$ /workout/list_all
 
 - 설명: 모든 운동 기록 조회
 
-#### <span style='background-color: #fff5b1'>GET</span> /workout/monthly
+#### $$\color{lightblue}GET$$ /workout/monthly
 
 - 설명: 월간 운동 기록 조회
 - 요청:
   - 쿼리: `required` year=YYYY & month = M
 
-#### <span style='background-color: #fff5b1'>GET</span> /workout/statistics
+#### $$\color{lightblue}GET$$ /workout/statistics
 
 - 설명: 기간별 운동 통계 조회
 - 요청:
@@ -143,7 +143,7 @@
   }
   ```
 
-#### <span style='background-color: #dcffe4'>POST</span> /workout
+#### $$\color{green}POST$$ /workout
 
 - 설명: 운동 기록 추가
 - 요청:
@@ -155,7 +155,7 @@
   }
   ```
 
-#### <span style='background-color: #dcffe4'>POST</span> /workout/add_exercise
+#### $$\color{green}POST$$ /workout/add_exercise
 
 - 설명: 운동 기록에 운동 종목 추가
 - 요청:
@@ -170,7 +170,7 @@
   }
   ```
 
-#### <span style='background-color: #ffdce0'>DELETE</span> /workout
+#### $$\color{red}DELETE$$ /workout
 
 - 설명: 운동 기록 삭제
 - 요청:
@@ -181,11 +181,11 @@
 <details>
 <summary><strong>3. 운동 종목 (Exercise)</strong></summary>
 
-#### <span style='background-color: #fff5b1'>GET</span> /exercise/list_all
+#### $$\color{lightblue}GET$$ /exercise/list_all
 
 - 설명: 전체 운동 종목 조회
 
-#### <span style='background-color: #fff5b1'>GET</span> /exercise/personal_record
+#### $$\color{lightblue}GET$$ /exercise/personal_record
 
 - 설명: 개인 기록 조회 (최대 수행 무게)
 - 요청:
@@ -198,7 +198,7 @@
   }
   ```
 
-#### <span style='background-color: #dcffe4'>POST</span> /exercise
+#### $$\color{green}POST$$ /exercise
 
 - 설명: 운동 종목 추가
 - 요청:
@@ -216,7 +216,7 @@
 <details>
 <summary><strong>4. 운동 루틴 (Routine)</strong></summary>
 
-#### <span style='background-color: #fff5b1'>GET</span> /routine/list_all
+#### $$\color{lightblue}GET$$ /routine/list_all
 
 - 설명: 전체 운동 루틴 조회
 - 응답 예시:
@@ -248,11 +248,11 @@
   ]
   ```
 
-#### <span style='background-color: #fff5b1'>GET</span> /routine/{routine_id}
+#### $$\color{lightblue}GET$$ /routine/{routine_id}
 
 - 설명: 운동 루틴 조회 (id별)
 
-#### <span style='background-color: #dcffe4'>POST</span> /routine
+#### $$\color{green}POST$$ /routine
 
 - 설명: 운동 루틴 추가
 - 요청:
@@ -264,7 +264,7 @@
   }
   ```
 
-#### <span style='background-color: #dcffe4'>POST</span> /routine/add_exercise
+#### $$\color{green}POST$$ /routine/add_exercise
 
 - 설명: 루틴에 운동 종목 추가
 - 요청:
