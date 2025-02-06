@@ -1,27 +1,22 @@
-# API 서버 프로젝트
+# My Workout Routine
 
-## 소개
+## 개요
 
 이 프로젝트는 **운동 기록 및 조회 API**를 위한 Node.js 기반의 서버입니다. 이 API를 통해 사용자는 자신의 운동 데이터를 기록하고, 조회할 수 있습니다.
 
-## 목차
-
-- [기능](#기능)
-- [데이터베이스 구조](#데이터베이스-구조)
-- [API 엔드포인트](#api-엔드포인트)
-- [설치 및 실행](#설치-및-실행)
-
----
-<br/>
-
-## 기능
-
+### 기능
 - 사용자 인증 및 권한 관리 (자체 회원 가입, GitHub 로그인)
 - 운동 기록 생성, 수정, 삭제
 - 특정 날짜 또는 기간의 운동 기록 조회
 - 여러 운동을 루틴으로 저장, 운동 기록에 일괄적으로 추가
 - 특정 기간의 운동 통계 조회 (운동 기록 수, 각 종목별 운동 횟수)
 - Personal record 조회 (종목별, 최대 반복수 별 최대 무게 검색)
+
+### 사용한 기술
+- Node.js / Express / Sequelize
+- JWT, GitHub OAuth api를 사용한 사용자 인증
+- bcrypt를 사용한 db 비밀번호 단방향 암호화
+
 
 ---
 <br/>
@@ -40,7 +35,7 @@
 <details>
 <summary><strong>1. 인증</strong></summary>
 
-#### POST /auth/register
+#### <span style='background-color: #dcffe4'>POST</span> /auth/register
 
 - 설명: 사용자 등록
 - 요청:
@@ -54,7 +49,7 @@
   }
   ```
 
-#### POST /auth/login
+#### <span style='background-color: #dcffe4'>POST</span> /auth/login
 
 - 설명: 사용자 로그인
 - 요청:
@@ -85,7 +80,7 @@
 <details>
 <summary><strong>2. 운동 기록 (Workout)</strong></summary>
 
-#### GET /workout/date
+#### <span style='background-color: #fff5b1'>GET</span> /workout/date
 
 - 설명: 특정 날짜의 운동 기록 조회
 - 요청:
@@ -118,17 +113,17 @@
   ]
   ```
 
-#### GET /workout/list_all
+#### <span style='background-color: #fff5b1'>GET</span> /workout/list_all
 
 - 설명: 모든 운동 기록 조회
 
-#### GET /workout/monthly
+#### <span style='background-color: #fff5b1'>GET</span> /workout/monthly
 
 - 설명: 월간 운동 기록 조회
 - 요청:
   - 쿼리: `required` year=YYYY & month = M
 
-#### GET /workout/statistics
+#### <span style='background-color: #fff5b1'>GET</span> /workout/statistics
 
 - 설명: 기간별 운동 통계 조회
 - 요청:
@@ -148,7 +143,7 @@
   }
   ```
 
-#### POST /workout
+#### <span style='background-color: #dcffe4'>POST</span> /workout
 
 - 설명: 운동 기록 추가
 - 요청:
@@ -160,7 +155,7 @@
   }
   ```
 
-#### POST /workout/add_exercise
+#### <span style='background-color: #dcffe4'>POST</span> /workout/add_exercise
 
 - 설명: 운동 기록에 운동 종목 추가
 - 요청:
@@ -175,7 +170,7 @@
   }
   ```
 
-#### DELETE /workout
+#### <span style='background-color: #ffdce0'>DELETE</span> /workout
 
 - 설명: 운동 기록 삭제
 - 요청:
@@ -186,11 +181,11 @@
 <details>
 <summary><strong>3. 운동 종목 (Exercise)</strong></summary>
 
-#### GET /exercise/list_all
+#### <span style='background-color: #fff5b1'>GET</span> /exercise/list_all
 
 - 설명: 전체 운동 종목 조회
 
-#### GET /exercise/personal_record
+#### <span style='background-color: #fff5b1'>GET</span> /exercise/personal_record
 
 - 설명: 개인 기록 조회 (최대 수행 무게)
 - 요청:
@@ -203,7 +198,7 @@
   }
   ```
 
-#### POST /exercise
+#### <span style='background-color: #dcffe4'>POST</span> /exercise
 
 - 설명: 운동 종목 추가
 - 요청:
@@ -221,7 +216,7 @@
 <details>
 <summary><strong>4. 운동 루틴 (Routine)</strong></summary>
 
-#### GET /routine/list_all
+#### <span style='background-color: #fff5b1'>GET</span> /routine/list_all
 
 - 설명: 전체 운동 루틴 조회
 - 응답 예시:
@@ -253,11 +248,11 @@
   ]
   ```
 
-#### GET /routine/{routine_id}
+#### <span style='background-color: #fff5b1'>GET</span> /routine/{routine_id}
 
 - 설명: 운동 루틴 조회 (id별)
 
-#### POST /routine
+#### <span style='background-color: #dcffe4'>POST</span> /routine
 
 - 설명: 운동 루틴 추가
 - 요청:
@@ -269,7 +264,7 @@
   }
   ```
 
-#### POST /routine/add_exercise
+#### <span style='background-color: #dcffe4'>POST</span> /routine/add_exercise
 
 - 설명: 루틴에 운동 종목 추가
 - 요청:
