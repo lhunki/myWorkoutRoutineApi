@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const db = require("../models");
 const { Routine, Exercise } = db;
 
-router.get("/listAll", async (req, res, next) => {
+router.get("/list_all", async (req, res, next) => {
   try {
     const routines = await Routine.findAll({
       where: { userId: req.userId },
@@ -20,7 +20,7 @@ router.get("/listAll", async (req, res, next) => {
 router.get("/id/:routineId", async (req, res, next) => {
   try {
     const routine = await Routine.findOne({
-      where: { id: req.params.routineId },
+      where: { id: req.query.routineId },
       include: Exercise,
     });
     res.json(routine);
@@ -69,7 +69,7 @@ router.post("/add_exercise", async (req, res, next) => {
       });
       await routine.addExercise(exercise[0], {
         through: {
-          set: req.body.set,
+          sets: req.body.sets,
           reps: req.body.reps,
           weight: req.body.weight,
         },

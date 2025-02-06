@@ -7,7 +7,7 @@ const { Exercise, Workout } = db;
 
 router.get("/personal_record", async (req, res, next) => {
   try {
-    if (!req.query.id) {
+    if (!req.query.exerciseId) {
       res.json({message: "exercise id is neccessary"})
     }
     let maxRep = 1;
@@ -15,7 +15,7 @@ router.get("/personal_record", async (req, res, next) => {
       maxRep = req.query.rep;
     }
     const exercise = await Exercise.findOne({
-      where: { userId: req.userId, id:req.query.id},
+      where: { userId: req.userId, id:req.query.exerciseId},
       include: Workout
     });
     let maxWeight = 0;
@@ -24,7 +24,7 @@ router.get("/personal_record", async (req, res, next) => {
         maxWeight = Math.max(maxWeight, workout.Workout_Exercise.weight);
       }
     })
-    res.json({maxWeight});
+    res.json({name: exercise.name, maxWeight});
   } catch (error) {
     next(error);
   }

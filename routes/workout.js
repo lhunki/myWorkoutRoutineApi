@@ -7,7 +7,7 @@ const { Op } = require("sequelize");
 const db = require("../models");
 const { Workout, Exercise } = db;
 
-router.get("/listAll", async (req, res, next) => {
+router.get("/list_all", async (req, res, next) => {
   try {
     const workouts = await Workout.findAll({
       where: { userId: req.userId },
@@ -22,6 +22,9 @@ router.get("/date", async (req, res, next) => {
   try {
     const userId = req.userId;
     const date = req.query.date;
+    if (!date) {
+      res.json({message: "date query string is neccessary"})
+    }
     const workouts = await Workout.findAll({
       where: {
         [Op.and]: [
